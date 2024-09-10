@@ -1,14 +1,13 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Blueprint
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part
 from google.auth import default
 import json
 import os
 
-
 # Set up Google credentials and Flask app
 credentials, project_id = default()
-app = Flask(__name__)
+ai_speech_to_text_gemini_bp = Blueprint('ai_speech_to_text_gemini_bp', __name__)
 
 # Replace with your project ID and location
 project_id = "stately-arc-434002-q1"
@@ -72,42 +71,34 @@ def transcribe_with_keyword(audio_file_path, keyword):
         print(json.dumps(response_dict, indent=2))
 
     try:
-        # Get the first candidate's response
+        # Get JSON response from the generated text
         json_str = response.candidates[0].content.parts[0].text
-        
-        # Clean the response (remove markdown formatting)
-        json_str = json_str.replace("```json\n", "").replace("```", "").strip()
-        
-        # Load the JSON response
-        json_response = json.loads(json_str)
-
-        # Extracting word information
-        extracted_data = []
-        for item in json_response:
-            word = item['word']
-            start_time = item['start']
-            end_time = item['end']
-            extracted_data.append((word, start_time, end_time))
-
-        return extracted_data
+        # Split JSON by newline to get individual timestamps for each word
+        json_lines = json_str.strip().split('\n')
+        json_response = []
+        for line in json_lines:
+            # Load each line as a separate JSON object
+            obj = json.loads(line)
+            # Extract start and end timestamps
+            start_time = obj['start_time']
+            end_time = obj['end_time']
+            # Add the word and timestamps as a tuple to the response list
+            json_response.append((obj['word'], start_time, end_time))
+        return json_response
 
     except json.JSONDecodeError as e:
         print("Error decoding JSON:", e)
         return None
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return None
 
-
-@app.route('/transcribe', methods=['POST'])
+@ai_speech_to_text_gemini_bp.route('/transcribe', methods=['POST'])
 def transcribe():
-    audio_file_path = f"{os.getcwd()}/Sample Audios/SampleAudio2.m4a"
-    print("Full Audio File Path:", audio_file_path)
-    # keyword = request.form.get('keyword')
-    keyword = "test"
+    # Get the audio file path from the request
+    data = request.get_json()
+    audio_file_path = data.get('audio_file_path')
+    keyword = data.get('keyword', "test")  # Default keyword if not provided
 
-    if not keyword:
-        return "Missing keyword", 400
+    if not audio_file_path:
+        return jsonify({"error": "Audio file path not provided."}), 400
 
     transcription = transcribe_with_keyword(audio_file_path, keyword)
 
@@ -115,7 +106,3 @@ def transcribe():
     print(transcription)
     print("############")
     return jsonify(transcription)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
