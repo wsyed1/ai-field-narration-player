@@ -1,14 +1,13 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Blueprint
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part
 from google.auth import default
 import json
 import os
 
-
 # Set up Google credentials and Flask app
 credentials, project_id = default()
-app = Flask(__name__)
+ai_speech_to_text_gemini_bp = Blueprint('ai_speech_to_text_gemini_bp', __name__)
 
 # Replace with your project ID and location
 project_id = "stately-arc-434002-q1"
@@ -72,7 +71,6 @@ def transcribe_with_keyword(audio_file_path, keyword):
         print(json.dumps(response_dict, indent=2))
 
     try:
-        # Fix to not change playback speed
         # Get JSON response from the generated text
         json_str = response.candidates[0].content.parts[0].text
         # Split JSON by newline to get individual timestamps for each word
@@ -92,15 +90,15 @@ def transcribe_with_keyword(audio_file_path, keyword):
         print("Error decoding JSON:", e)
         return None
 
-@app.route('/transcribe', methods=['POST'])
+@ai_speech_to_text_gemini_bp.route('/transcribe', methods=['POST'])
 def transcribe():
-    # Hardcoded audio file path
-    audio_file_path = "/Users/wsyed1/Desktop/market-research/APIs/SampleAudio.mp3"
-    # keyword = request.form.get('keyword')
-    keyword = "test"
+    # Get the audio file path from the request
+    data = request.get_json()
+    audio_file_path = data.get('audio_file_path')
+    keyword = data.get('keyword', "test")  # Default keyword if not provided
 
-    if not keyword:
-        return "Missing keyword", 400
+    if not audio_file_path:
+        return jsonify({"error": "Audio file path not provided."}), 400
 
     transcription = transcribe_with_keyword(audio_file_path, keyword)
 
@@ -108,7 +106,3 @@ def transcribe():
     print(transcription)
     print("############")
     return jsonify(transcription)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)

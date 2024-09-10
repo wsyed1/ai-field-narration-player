@@ -1,14 +1,14 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Blueprint
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import json
 
-app = Flask(__name__)
+ai_speech_to_text_whisper_bp = Blueprint('ai_speech_to_text_whisper_bp', __name__)
 load_dotenv()
 client = OpenAI(api_key=os.getenv('openai_api_key'))
 
-@app.route('/transcribe', methods=['POST'])
+@ai_speech_to_text_whisper_bp.route('/transcribe', methods=['POST'])
 def transcribe():
     # Get the audio file path from the request
     data = request.get_json()
@@ -46,7 +46,7 @@ def transcribe():
     # Return the transcription as JSON
     return jsonify(transcription_data)
 
-@app.route('/playback', methods=['POST'])
+@ai_speech_to_text_whisper_bp.route('/playback', methods=['POST'])
 def playback():
     # Get the audio file path from the request
     data = request.get_json()
@@ -206,5 +206,3 @@ def transcribe_internal(audio_file_path):
     response = transcribe()  # Call the transcribe function directly
     return response.get_json()  # Extract JSON data from the response
 
-if __name__ == '__main__':
-    app.run(debug=True)

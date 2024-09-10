@@ -1,11 +1,49 @@
 # ai-field-narration-player
 
-## Steps to install
+## Features
 
-1. Install Python
-2. Create a Virtual Environment
-3. Add a .env file and have the necessary API keys for OpenAI
+- Transcription of audio files to text using OpenAI's Whisper model.
+- Synthesizes audio and returns word-level timestamps, temporarily storing the audio in memory.
+- Provides a mapping of derived fields along with the corresponding audio segments where each field is spoken. For cases where the mapping is inferred, context is provided to aid understanding. Additionally, timestamps for significant sentences or meaningful parts of the audio help listeners identify which portions correspond to each derived field.
+- Integration with Google Vertex AI for enhanced speech-to-text capabilities.
 
+
+## Prerequisites
+
+- Python 3.7 or higher
+- Flask
+- OpenAI Python client
+- Google Vertex AI SDK
+- Python Dotenv
+
+## Setup Instructions
+
+### 1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your_username/your_repository.git
+   cd your_repository
+   ```
+
+### 2. Install the required packages:
+    ```bash
+    pip install flask openai python-dotenv google-cloud-vertex-ai
+
+    ```
+
+### 3. Set up environment variables:
+
+Create a `.env` file at the project root and add your OpenAI API key and Google Cloud Vertex configuration:
+```bash
+openai_api_key=your_openai_api_key_here
+GOOGLE_APPLICATION_CREDENTIALS=path_to_your_google_service_account_key.json
+```
+
+## Usage
+
+### 1. Running the Application:
+
+Run `main.py` on your terminal. Make sure you are in the path where the file is present
 
 ## APIs
 
@@ -16,7 +54,11 @@ Synthesizes the audio and returns a word level timestamp and stores the audio in
 
 ##### cURL
 
-curl -X POST -F "file=@/path/to/your/SampleAudio2.m4a" http://localhost:5000/transcribe
+```bash
+curl --location 'http://localhost:5000/transcribe' \
+--header 'Content-Type: application/json' \
+--data '{"audio_file_path": "YOUR_AUDIO_FILE_PATH.m4a"}'
+```
 
 
 ##### Sample Response
@@ -156,7 +198,11 @@ This feature provides a mapping of fields along with the corresponding segments 
 
 ##### cURL
 
-curl http://localhost:5000/playback
+```bash
+curl --location 'http://localhost:5000/playback' \
+--header 'Content-Type: application/json' \
+--data '{"audio_file_path": "YOUR_AUDIO_FILE_PATH.m4a"}'
+```
 
 
 ##### Sample Response
@@ -207,7 +253,14 @@ Synthesizes the audio and returns a word level timestamp and stores the audio in
 
 ##### cURL
 
-curl -X POST http://localhost:5000/transcribe
+```bash
+curl --location 'http://localhost:5000/transcribe' \
+--header 'Content-Type: application/json' \
+--data '{
+           "audio_file_path": "YOUR_AUDIO_FILE_PATH.m4a",
+           "keyword": "test"
+         }'
+```
 
 
 ##### Sample Response
