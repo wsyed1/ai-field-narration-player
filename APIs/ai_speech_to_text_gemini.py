@@ -72,37 +72,30 @@ def transcribe_with_keyword(audio_file_path, keyword):
         print(json.dumps(response_dict, indent=2))
 
     try:
-        # Get the first candidate's response
+        # Fix to not change playback speed
+        # Get JSON response from the generated text
         json_str = response.candidates[0].content.parts[0].text
-        
-        # Clean the response (remove markdown formatting)
-        json_str = json_str.replace("```json\n", "").replace("```", "").strip()
-        
-        # Load the JSON response
-        json_response = json.loads(json_str)
-
-        # Extracting word information
-        extracted_data = []
-        for item in json_response:
-            word = item['word']
-            start_time = item['start']
-            end_time = item['end']
-            extracted_data.append((word, start_time, end_time))
-
-        return extracted_data
+        # Split JSON by newline to get individual timestamps for each word
+        json_lines = json_str.strip().split('\n')
+        json_response = []
+        for line in json_lines:
+            # Load each line as a separate JSON object
+            obj = json.loads(line)
+            # Extract start and end timestamps
+            start_time = obj['start_time']
+            end_time = obj['end_time']
+            # Add the word and timestamps as a tuple to the response list
+            json_response.append((obj['word'], start_time, end_time))
+        return json_response
 
     except json.JSONDecodeError as e:
         print("Error decoding JSON:", e)
         return None
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return None
-
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
-    audio_file_path = f"{os.getcwd()}/Sample Audios/SampleAudio2.m4a"
-    print("Full Audio File Path:", audio_file_path)
+    # Hardcoded audio file path
+    audio_file_path = "/Users/wsyed1/Desktop/market-research/APIs/SampleAudio.mp3"
     # keyword = request.form.get('keyword')
     keyword = "test"
 

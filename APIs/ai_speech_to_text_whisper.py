@@ -1,24 +1,22 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import json
 
-# def configure():
-#     load_dotenv()
-
 app = Flask(__name__)
 load_dotenv()
 client = OpenAI(api_key=os.getenv('openai_api_key'))
 
-# Variable to store the transcription data
-transcription_data = None  # Initialize with None
-
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
-    global transcription_data  # Use the correct variable name
+    # Get the audio file path from the request
+    data = request.get_json()
+    audio_file_path = data.get('audio_file_path')
+
+    if not audio_file_path:
+        return jsonify({"error": "Audio file path not provided."}), 400
     
-    audio_file_path = f"{os.getcwd()}/Sample Audios/SampleAudio2.m4a"
     print("Full Audio File Path:", audio_file_path)
 
     # Open the audio file
@@ -48,16 +46,27 @@ def transcribe():
     # Return the transcription as JSON
     return jsonify(transcription_data)
 
-@app.route('/playback', methods=['GET'])
+@app.route('/playback', methods=['POST'])
 def playback():
+    # Get the audio file path from the request
+    data = request.get_json()
+    audio_file_path = data.get('audio_file_path')
+
+    if not audio_file_path:
+        return jsonify({"error": "Audio file path not provided."}), 400
+    
+    # Call the transcribe API internally
+    transcribe_response = transcribe_internal(audio_file_path)
+
+    if 'error' in transcribe_response:
+        return transcribe_response  # Pass through error from /transcribe
+
+    transcription_data = transcribe_response
 
     print("**********")
     print(transcription_data)
     print("**********")
 
-
-    if transcription_data is None:
-        return jsonify({"error": "No transcription data available."}), 404
     prompt = f"""
     Analyze the transcription data JSON: {json.dumps(transcription_data)} 
     and return a JSON array with the following schema:
@@ -179,7 +188,6 @@ def playback():
         }]
     )
 
-    
     print("==============")
     print(completion)
     print("==============")
@@ -192,16 +200,11 @@ def playback():
         print(f"An error occurred: {e}")
         return jsonify({"error": "Failed to process the request."}), 500
 
+def transcribe_internal(audio_file_path):
+    # Function to handle internal calls to the transcribe API
+    data = {'audio_file_path': audio_file_path}
+    response = transcribe()  # Call the transcribe function directly
+    return response.get_json()  # Extract JSON data from the response
+
 if __name__ == '__main__':
-    # configure()
     app.run(debug=True)
-
-
-
-# from dotenv import load_dotenv
-# from openai import OpenAI
-# import os
-
-# load_dotenv()
-# client = OpenAI(api_key=os.getenv('openai_api_key'))
-# print(os.getenv('openai_api_key'))
