@@ -6,51 +6,62 @@ import uuid
 load_dotenv()
 client = OpenAI(api_key=os.getenv("openai_api_key"))
 ai_speech_to_text_gpt4o_bp = Blueprint('ai_speech_to_text_gpt4o_bp', __name__)
-# In-memory conversation storage for demo
+# In-memory conversation storage
 conversation_store = {}
+# Supported system prompts
+system_prompts = {
+    "en": "You are a helpful assistant that creates invoices and asks follow-up questions when needed.",
+    "es": "Eres un asistente útil que crea facturas y hace preguntas de seguimiento cuando sea necesario."
+}
+# Voice mapping (OpenAI voices may support multiple languages soon)
+voice_mapping = {
+    "en": "shimmer",  # Or nova
+    "es": "onyx"      # Adjust when OpenAI offers better Spanish voices
+}
 @ai_speech_to_text_gpt4o_bp.route('/voice-assist', methods=['POST'])
 def voice_assist():
     data = request.get_json()
     audio_file_path = data.get("audio_file_path")
     conversation_id = data.get("conversation_id")
+    language_code = data.get("language_code", "en")  # default to English
     if not audio_file_path or not conversation_id:
         return jsonify({"error": "Audio file path and conversation_id must be provided."}), 400
+    # Step 1: Transcribe
     try:
         with open(audio_file_path, 'rb') as audio_file:
             transcription_result = client.audio.transcriptions.create(
                 file=audio_file,
                 model="whisper-1",
-                response_format="text"
+                response_format="text",
+                language=language_code
             )
         user_input_text = transcription_result
-        print("Transcribed:", user_input_text)
+        print(f"[Transcribed ({language_code})] →", user_input_text)
     except Exception as e:
         return jsonify({"error": f"Transcription failed: {e}"}), 500
-    # Step 2: Track conversation history
+    # Step 2: Track conversation
     if conversation_id not in conversation_store:
-        # First message in the thread
         conversation_store[conversation_id] = [
-            {"role": "system", "content": "You are a helpful assistant that creates invoices and asks follow-up questions when needed."}
+            {"role": "system", "content": system_prompts.get(language_code, system_prompts["en"])}
         ]
-    # Append user input
     conversation_store[conversation_id].append({"role": "user", "content": user_input_text})
-    # Step 3: Send full conversation to GPT-4o
+    # Step 3: GPT-4o response
     try:
         gpt_response = client.chat.completions.create(
             model="gpt-4o",
             messages=conversation_store[conversation_id]
         )
         reply_text = gpt_response.choices[0].message.content
-        print("GPT-4o reply:", reply_text)
-        # Append assistant reply to history
+        print(f"[GPT-4o reply ({language_code})] →", reply_text)
         conversation_store[conversation_id].append({"role": "assistant", "content": reply_text})
     except Exception as e:
         return jsonify({"error": f"GPT-4o failed: {e}"}), 500
-    # Step 4: Convert to speech
+    # Step 4: Text-to-speech
     try:
+        selected_voice = voice_mapping.get(language_code, "nova")
         tts_result = client.audio.speech.create(
             model="tts-1",
-            voice="nova",
+            voice=selected_voice,
             input=reply_text
         )
         output_path = f"voice_reply_{uuid.uuid4().hex}.mp3"
@@ -62,5 +73,6 @@ def voice_assist():
         "transcription": user_input_text,
         "reply_text": reply_text,
         "reply_audio_path": output_path,
-        "conversation_id": conversation_id  # Return this in case client wants to keep it
+        "language_code": language_code,
+        "conversation_id": conversation_id
     })
