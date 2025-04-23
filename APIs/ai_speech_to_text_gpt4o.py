@@ -214,6 +214,7 @@ def stream_text_assist():
     reset_if_new_task(conversation_id, user_input_text)
     conversation_store[conversation_id].append({"role": "user", "content": user_input_text})
     def generate():
+        print(">>> Streaming Started")
         try:
             response = client.chat.completions.create(
                 model="gpt-4o",
@@ -223,10 +224,13 @@ def stream_text_assist():
             collected = ""
             for chunk in response:
                 delta = chunk.choices[0].delta
-                if "content" in delta:
+                print(delta)
+                if delta.content is not None:
+                # if "content" in delta:
                     text = delta.content
                     collected += text
-                    yield f"data: {text}\n\n"
+                    print(text)
+                    yield text + "\n"
             # Store final full response
             conversation_store[conversation_id].append({"role": "assistant", "content": collected})
         except Exception as e:
