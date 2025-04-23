@@ -1,10 +1,11 @@
 
 from flask import Blueprint, request, jsonify
+from flask import Response, stream_with_context, request
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
-import base64
 import uuid
+import base64
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("openai_api_key"))
@@ -135,6 +136,43 @@ def generate_tts_response(text, language_code):
         f.write(tts_result.content)
     return output_path
 
+@ai_speech_to_text_gpt4o_bp.route('/voice-assist', methods=['POST'])
+def voice_assist():
+    data = request.get_json()
+    audio_file_path = data.get("audio_file_path")
+    conversation_id = data.get("conversation_id")
+    language_code = data.get("language_code", "en")
+    if not audio_file_path or not conversation_id:
+        return jsonify({"error": "Missing audio_file_path or conversation_id"}), 400
+    initialize_conversation(conversation_id)
+    try:
+        with open(audio_file_path, 'rb') as audio_file:
+            transcription = client.audio.transcriptions.create(
+                file=audio_file,
+                model="whisper-1",
+                response_format="text",
+                language=language_code
+            )
+        user_input_text = transcription
+    except Exception as e:
+        return jsonify({"error": f"Transcription failed: {e}"}), 500
+    try:
+        reply, detail = process_user_input(conversation_id, user_input_text, language_code)
+        audio_path = generate_tts_response(reply, language_code)
+        with open(audio_path, "rb") as f:
+            base64_audio = base64.b64encode(f.read()).decode("utf-8")
+    except Exception as e:
+        return jsonify({"error": f"Processing failed: {e}"}), 500
+    return jsonify({
+        "user_input_text": user_input_text,
+        "reply_text": reply,
+        "detailed_response": detail,
+        "reply_audio_path": audio_path,
+        "reply_audio_base64": base64_audio,
+        "language_code": language_code,
+        "conversation_id": conversation_id
+    })
+
 @ai_speech_to_text_gpt4o_bp.route('/text-assist', methods=['POST'])
 def text_assist():
     data = request.get_json()
@@ -155,11 +193,42 @@ def text_assist():
         return jsonify({"error": f"Processing failed: {e}"}), 500
 
     return jsonify({
-        "language_code": language_code,
-        "conversation_id": conversation_id,
         "user_input_text": user_input_text,
         "reply_text": reply,
         "detailed_response": detail,
         "reply_audio_path": audio_path,
-        "reply_audio_base64": base64_audio
+        "reply_audio_base64": base64_audio,
+        "language_code": language_code,
+        "conversation_id": conversation_id
     })
+
+@ai_speech_to_text_gpt4o_bp.route('/stream-text', methods=['POST'])
+def stream_text_assist():
+    data = request.get_json()
+    user_input_text = data.get("user_input_text")
+    conversation_id = data.get("conversation_id")
+    language_code = data.get("language_code", "en")
+    if not user_input_text or not conversation_id:
+        return jsonify({"error": "Missing user_input_text or conversation_id"}), 400
+    initialize_conversation(conversation_id)
+    reset_if_new_task(conversation_id, user_input_text)
+    conversation_store[conversation_id].append({"role": "user", "content": user_input_text})
+    def generate():
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=conversation_store[conversation_id],
+                stream=True  # Enable streaming mode
+            )
+            collected = ""
+            for chunk in response:
+                delta = chunk.choices[0].delta
+                if "content" in delta:
+                    text = delta.content
+                    collected += text
+                    yield f"data: {text}\n\n"
+            # Store final full response
+            conversation_store[conversation_id].append({"role": "assistant", "content": collected})
+        except Exception as e:
+            yield f"data: [ERROR] {str(e)}\n\n"
+    return Response(stream_with_context(generate()), mimetype="text/event-stream")
