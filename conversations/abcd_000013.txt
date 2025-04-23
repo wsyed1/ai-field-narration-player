@@ -155,3 +155,98 @@ Let me know if you'd like any changes!
 
 --- END OF TURN ---
 
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Hey, how are you? Hows the weather
+ASSISTANT: Hey! I'm great, thanks for asking. I don't have real-time weather data, but I can help you find a reliable weather source if you'd like. Just let me know what location you're interested in!
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: I want to create an invoice. Help me
+ASSISTANT: Of course! What service or product is this invoice for?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: I want to create an invoice. Help me
+ASSISTANT: Of course! What service or product is this invoice for?
+USER: Plumbing job 20 dollars and total with taxes is 25. Toxes 5 dollars. No other fee.
+ASSISTANT: Got it! Could you also provide the client's name and the date of the service?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Ron Casper
+ASSISTANT: Hi there! Could you tell me a bit more about what you need help with regarding Ron Casper? Are you looking to contact him, learn more about him, or something else?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Client name is Ron Casper
+ASSISTANT: Great! What would you like to do for Ron Casper today?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: I want to create an invoice for him, Plumbing job 20 dollars tawxes 5 dollars, total 25 dollars
+ASSISTANT: Got it! Who should the invoice be addressed to? Also, what date should we put on it?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Adddress to Tom Casper, Date APril 25
+ASSISTANT: Could you please let me know the content or purpose of the message to Tom Casper?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Phone 2022022020
+ASSISTANT: Got it! Could you let me know how I can assist you with this phone number? Whether it's saving it, adding it to an email, or anything else, I'm here to help!
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: lets restart
+ASSISTANT: Sure thing! What would you like to work on today?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Help me create an invoice
+ASSISTANT: Of course! Who is the invoice for, and what services or products are being billed?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Help me create an invoice
+ASSISTANT: Of course! Who is the invoice for, and what services or products are being billed?
+USER: Invoice for Tom Casper. Plumbing job 20 dollars, Taxes 4 dollars, total 25 dollards, convenience fee 1 dollar, Date tomorrow's date
+ASSISTANT: Got it! Here's your invoice:
+
+---
+
+**Invoice**
+
+**To:** Tom Casper  
+**Date:** [Tomorrow's Date]
+
+**Description:**
+
+- **Plumbing Job:** $20.00
+- **Taxes:** $4.00
+- **Convenience Fee:** $1.00  
+
+**Total Amount Due:** $25.00
+
+---
+
+Let me know if there's anything else you need!
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Invoice for Tom Casper. Plumbing job 20 dollars, Taxes 4 dollars, total 25 dollards, convenience fee 1 dollar, Date tomorrow's date
+ASSISTANT: Got it! Just to confirm, is there a specific email or address where you'd like me to send this invoice once it's ready?
+
+--- END OF TURN ---
+
