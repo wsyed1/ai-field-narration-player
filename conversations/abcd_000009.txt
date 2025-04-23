@@ -1,0 +1,148 @@
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hello I want to create an invoice
+ASSISTANT: Great, I can help with that. Who's the invoice for, and what items or services are being billed?
+
+--- END OF TURN ---
+
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hello I want to create an invoice
+ASSISTANT: Great, I can help with that. Who's the invoice for, and what items or services are being billed?
+USER: It covers a plumbing job for 100 dollars, tax 10 dollars and total is 110. Thats it. Date is april 23 2025
+ASSISTANT: Alright, here's a simple invoice for your plumbing job:
+
+---
+
+**Invoice**  
+**Date:** April 23, 2025  
+
+**Bill To:**  
+[Client's Name]
+
+**Description:**  
+- Plumbing Services: $100  
+- Tax: $10  
+
+**Total Amount Due:** $110  
+
+**Payment Due By:** [Insert Due Date]
+
+**Payment Methods Accepted:** [e.g., Bank Transfer, PayPal, etc.]
+
+---
+
+Would you like me to add anything else, like client contact details or your business information?
+
+--- END OF TURN ---
+
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hello I want to create an invoice
+ASSISTANT: Great, I can help with that. Who's the invoice for, and what items or services are being billed?
+USER: It covers a plumbing job for 100 dollars, tax 10 dollars and total is 110. Thats it. Date is april 23 2025
+ASSISTANT: Alright, here's a simple invoice for your plumbing job:
+
+---
+
+**Invoice**  
+**Date:** April 23, 2025  
+
+**Bill To:**  
+[Client's Name]
+
+**Description:**  
+- Plumbing Services: $100  
+- Tax: $10  
+
+**Total Amount Due:** $110  
+
+**Payment Due By:** [Insert Due Date]
+
+**Payment Methods Accepted:** [e.g., Bank Transfer, PayPal, etc.]
+
+---
+
+Would you like me to add anything else, like client contact details or your business information?
+USER: Yes Client is ABC Financials, Contact Abc@xyz.com
+ASSISTANT: Here's the updated invoice:
+
+---
+
+**Invoice**  
+**Date:** April 23, 2025  
+
+**Bill To:**  
+ABC Financials  
+**Contact:** Abc@xyz.com  
+
+**Description:**  
+- Plumbing Services: $100  
+- Tax: $10  
+
+**Total Amount Due:** $110  
+
+**Payment Due By:** [Insert Due Date]  
+
+**Payment Methods Accepted:** [e.g., Bank Transfer, PayPal, etc.]
+
+---
+
+Anything else you need to include, like your own business name or contact info?
+
+--- END OF TURN ---
+
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hello I want to create an invoice
+ASSISTANT: Great, I can help with that. Who's the invoice for, and what items or services are being billed?
+USER: It covers a plumbing job for 100 dollars, tax 10 dollars and total is 110. Thats it. Date is april 23 2025
+ASSISTANT: Alright, here's a simple invoice for your plumbing job:
+
+---
+
+**Invoice**  
+**Date:** April 23, 2025  
+
+**Bill To:**  
+[Client's Name]
+
+**Description:**  
+- Plumbing Services: $100  
+- Tax: $10  
+
+**Total Amount Due:** $110  
+
+**Payment Due By:** [Insert Due Date]
+
+**Payment Methods Accepted:** [e.g., Bank Transfer, PayPal, etc.]
+
+---
+
+Would you like me to add anything else, like client contact details or your business information?
+USER: Yes Client is ABC Financials, Contact Abc@xyz.com
+ASSISTANT: Here's the updated invoice:
+
+---
+
+**Invoice**  
+**Date:** April 23, 2025  
+
+**Bill To:**  
+ABC Financials  
+**Contact:** Abc@xyz.com  
+
+**Description:**  
+- Plumbing Services: $100  
+- Tax: $10  
+
+**Total Amount Due:** $110  
+
+**Payment Due By:** [Insert Due Date]  
+
+**Payment Methods Accepted:** [e.g., Bank Transfer, PayPal, etc.]
+
+---
+
+Anything else you need to include, like your own business name or contact info?
+USER: Yes Client is ABC Financials, Contact Abc@xyz.com
+ASSISTANT: I've got that part set! Would you like to add your business name or contact details to the invoice before it's finalized?
+
+--- END OF TURN ---
+

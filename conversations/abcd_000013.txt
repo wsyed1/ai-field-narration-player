@@ -1,0 +1,157 @@
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Hi, how are you
+ASSISTANT: I'm doing great, thanks for asking! How can I assist you today?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Help me with creating an invoice, The invoice date is 11 May 2025
+ASSISTANT: Sure thing! Who should the invoice be addressed to, and what products or services are being billed?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Help me with creating an invoice, The invoice date is 11 May 2025
+ASSISTANT: Sure thing! Who should the invoice be addressed to, and what products or services are being billed?
+USER: Services is only one service Cleaning job 20 dollars. Address to AMC Cleaning services, Mountain View, CA
+ASSISTANT: Got it! Here's the invoice:
+
+---
+
+**Invoice**
+
+**Date:** May 11, 2025  
+**To:** AMC Cleaning Services  
+**Address:** Mountain View, CA  
+
+**Description of Service:**
+
+1. Cleaning job - $20.00  
+
+**Total Amount Due:** $20.00  
+
+---
+
+If there's anything else you need to add or change, just let me know!
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Ok great. Now I want to create an email draft
+ASSISTANT: Sure thing! Who's the email going to?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Ok great. Now I want to create an email draft
+ASSISTANT: Sure thing! Who's the email going to?
+USER: syedwaseem@gmail.com and tell them to attend the conference at 11 June and write in a friendly tone
+ASSISTANT: Here's a draft for you:
+
+---
+
+Subject: Join Us for the Conference on June 11th!
+
+Hi Syed,
+
+I hope this email finds you well! I'm writing to invite you to the upcoming conference happening on June 11th. It promises to be an exciting event, and I think you'd really enjoy it.
+
+Let me know if you’re able to make it—would love to see you there!
+
+Best,  
+[Your Name]
+
+---
+
+Feel free to tweak it as needed!
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Ok great. Now I want to create an email draft
+ASSISTANT: Sure thing! Who's the email going to?
+USER: syedwaseem@gmail.com and tell them to attend the conference at 11 June and write in a friendly tone
+ASSISTANT: Here's a draft for you:
+
+---
+
+Subject: Join Us for the Conference on June 11th!
+
+Hi Syed,
+
+I hope this email finds you well! I'm writing to invite you to the upcoming conference happening on June 11th. It promises to be an exciting event, and I think you'd really enjoy it.
+
+Let me know if you’re able to make it—would love to see you there!
+
+Best,  
+[Your Name]
+
+---
+
+Feel free to tweak it as needed!
+USER: Great. Now create a marketing campain email for MailChimp 
+ASSISTANT: Absolutely! What product or service will this campaign focus on?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: 30% discount on merchandise until June 5. Hurry up. Exciting and friendly tone
+ASSISTANT: Sure thing! Here's a draft with an engaging tone:
+
+---
+
+🎉 Big News! 🎉
+
+Get ready for some shopping fun! We're offering an amazing 30% discount on all merchandise until June 5. Don't wait—stop by and treat yourself to some fabulous finds!
+
+Hurry, time's ticking! ⏰
+
+We can't wait to see you! 😄
+
+--- 
+
+How does that sound?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Now. Lets create another email draft
+ASSISTANT: Sure thing! What's the subject of this new email?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Now. Lets create another email draft
+ASSISTANT: Sure thing! What's the subject of this new email?
+USER: 50% offer on Airpods. Tell them offer valid until 20 June
+ASSISTANT: Great! Who would you like to send this email to?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Now. Lets create another email draft
+ASSISTANT: Sure thing! What's the subject of this new email?
+USER: 50% offer on Airpods. Tell them offer valid until 20 June
+ASSISTANT: Great! Who would you like to send this email to?
+USER: test@gmail.com
+ASSISTANT: Perfect! Here's a draft for you:
+
+---
+
+**Subject:** 50% Off on AirPods - Limited Time Offer!
+
+Hi there,
+
+We're excited to let you know about an exclusive 50% discount on AirPods! But hurry, this offer is only valid until June 20th.
+
+Don't miss out on this chance to grab your pair!
+
+Best,  
+[Your Name]
+
+---
+
+Let me know if you'd like any changes!
+
+--- END OF TURN ---
+

@@ -1,0 +1,176 @@
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hi, create me an invoice
+ASSISTANT: Who is the invoice for?
+
+--- END OF TURN ---
+
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hi, create me an invoice
+ASSISTANT: Who is the invoice for?
+USER: Yes Client is ABC Financials, Contact name Abc@xyz.com
+ASSISTANT: Who is the invoice for?
+
+--- END OF TURN ---
+
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hi, create me an invoice
+ASSISTANT: Who is the invoice for?
+USER: Yes Client is ABC Financials, Contact name Abc@xyz.com
+ASSISTANT: Who is the invoice for?
+USER: GreatAmericaFinancials
+ASSISTANT: Who is the invoice for?
+
+--- END OF TURN ---
+
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hi, create me an invoice
+ASSISTANT: Who is the invoice for?
+USER: Yes Client is ABC Financials, Contact name Abc@xyz.com
+ASSISTANT: Who is the invoice for?
+USER: GreatAmericaFinancials
+ASSISTANT: Who is the invoice for?
+USER: GreatAmericaFinancials is the invoice for
+ASSISTANT: Who is the invoice for?
+
+--- END OF TURN ---
+
+USER: Hi, can you help me with creating an invoice
+ASSISTANT: Of course! To get started, could you please provide the invoice number?
+
+--- END OF TURN ---
+
+USER: Hi, can you help me with creating an invoice
+ASSISTANT: Of course! To get started, could you please provide the invoice number?
+USER: 123456
+ASSISTANT: What is the date of the invoice?
+
+--- END OF TURN ---
+
+USER: Hi, can you help me with creating an invoice
+ASSISTANT: Of course! To get started, could you please provide the invoice number?
+USER: 123456
+ASSISTANT: What is the date of the invoice?
+USER: Date is APril 25 2025 and the service is Plumbing job for 50 dollars and the total is 55 dollars with 5 dollar sales tax
+ASSISTANT: To complete the invoice, could you please provide the following missing information:
+
+- Invoice Number
+- Bill To
+- Ship To (if applicable)
+- Quantity of service items
+- Payment Terms
+- Due Date
+
+--- END OF TURN ---
+
+USER: Hi, can you help me with creating an invoice
+ASSISTANT: Of course! To get started, could you please provide the invoice number?
+USER: 123456
+ASSISTANT: What is the date of the invoice?
+USER: Date is APril 25 2025 and the service is Plumbing job for 50 dollars and the total is 55 dollars with 5 dollar sales tax
+ASSISTANT: To complete the invoice, could you please provide the following missing information:
+
+- Invoice Number
+- Bill To
+- Ship To (if applicable)
+- Quantity of service items
+- Payment Terms
+- Due Date
+USER: Leave them empty for now
+ASSISTANT: Let's start with the basics. Could you please provide the invoice number?
+
+--- END OF TURN ---
+
+USER: Hi there
+ASSISTANT: Hello! How can I assist you today?
+
+--- END OF TURN ---
+
+USER: Hi there
+ASSISTANT: Hello! How can I assist you today?
+USER: Can you create an invoice
+ASSISTANT: I'm unable to create or process actual invoices. However, I can help guide you through the process of creating one. Here's a basic outline of what an invoice typically includes:
+
+1. **Header:**
+   - Your company name and logo
+   - Your contact information (address, phone, email)
+   - Invoice number
+   - Date of issue
+   - Due date
+
+2. **Client Information:**
+   - Client name
+   - Client contact information (address, phone, email)
+
+3. **Invoice Details:**
+   - List of products or services provided
+   - Description of each item
+   - Quantity
+   - Unit price
+   - Total price for each line item
+
+4. **Subtotal:**
+
+5. **Taxes:**
+   - Tax rate
+   - Total tax amount
+
+6. **Total Amount Due:**
+
+7. **Payment Terms:**
+   - Accepted payment methods
+   - Payment instructions
+   - Late payment fees, if applicable
+
+8. **Additional Information:**
+   - Notes or special instructions
+   - Your contact information for billing inquiries
+
+If you use an accounting software like QuickBooks, FreshBooks, or similar services, they often provide templates to make this process easier. If you need more specific advice or a template, let me know!
+
+--- END OF TURN ---
+
+USER: Can you create an invoice
+ASSISTANT: Please provide the customer_name for the invoice.
+
+--- END OF TURN ---
+
+USER: Can you create an invoice
+ASSISTANT: Please provide the customer_name for the invoice.
+USER: Customer Name is Waseem. Date is today's date and item is plubming job for 20 dollars
+ASSISTANT: Please provide the invoice number.
+
+--- END OF TURN ---
+
+USER: Can you create an invoice
+ASSISTANT: Please provide the customer_name for the invoice.
+USER: Customer Name is Waseem. Date is today's date and item is plubming job for 20 dollars
+ASSISTANT: Please provide the invoice number.
+USER: Invoice Number is 10210
+ASSISTANT: Please provide the customer_name for the invoice.
+
+--- END OF TURN ---
+
+USER: Can you create an invoice
+ASSISTANT: Please provide the customer_name for the invoice.
+USER: Customer Name is Waseem. Date is today's date and item is plubming job for 20 dollars
+ASSISTANT: Please provide the invoice number.
+USER: Invoice Number is 10210
+ASSISTANT: Please provide the customer_name for the invoice.
+USER: I jusst gave you the customer name. Why you asking again
+ASSISTANT: Thank you for providing the customer name. Could you please provide the invoice date?
+
+--- END OF TURN ---
+
+USER: Can you create an invoice
+ASSISTANT: Please provide the customer_name for the invoice.
+USER: Customer Name is Waseem. Date is today's date and item is plubming job for 20 dollars
+ASSISTANT: Please provide the invoice number.
+USER: Invoice Number is 10210
+ASSISTANT: Please provide the customer_name for the invoice.
+USER: I jusst gave you the customer name. Why you asking again
+ASSISTANT: Thank you for providing the customer name. Could you please provide the invoice date?
+USER: I gave you the invoice date also
+ASSISTANT: Could you please provide the customer name for the invoice?
+
+--- END OF TURN ---
+
