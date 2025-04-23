@@ -1,3 +1,4 @@
+import base64
 from flask import Blueprint, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -112,18 +113,21 @@ def text_assist():
         tts_result = client.audio.speech.create(
             model="tts-1",
             voice=selected_voice,
-            input=reply_text
+            input=reply_text,
+            response_format="pcm"
         )
-        output_path = f"voice_reply_{uuid.uuid4().hex}.mp3"
-        with open(output_path, "wb") as f:
-            f.write(tts_result.content)
+        audio_base64 = base64.b64encode(tts_result.content).decode('utf-8')
+        # output_path = f"voice_reply_{uuid.uuid4().hex}.mp3"
+        # with open(output_path, "wb") as f:
+        #     f.write(tts_result.content)
     except Exception as e:
         return jsonify({"error": f"TTS failed: {e}"}), 500
 
     return jsonify({
         "user_input_text": user_input_text,
         "reply_text": reply_text,
-        "reply_audio_path": output_path,
+        # "reply_audio_path": output_path,
         "language_code": language_code,
-        "conversation_id": conversation_id
+        "conversation_id": conversation_id,
+        "audio_base64": audio_base64 
     })
