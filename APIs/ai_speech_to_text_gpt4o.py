@@ -155,11 +155,11 @@ def text_assist():
         return jsonify({"error": f"Processing failed: {e}"}), 500
 
     return jsonify({
+        "language_code": language_code,
+        "conversation_id": conversation_id,
         "user_input_text": user_input_text,
         "reply_text": reply,
         "detailed_response": detail,
         "reply_audio_path": audio_path,
-        "reply_audio_base64": base64_audio,
-        "language_code": language_code,
-        "conversation_id": conversation_id
+        "reply_audio_base64": base64_audio
     })
