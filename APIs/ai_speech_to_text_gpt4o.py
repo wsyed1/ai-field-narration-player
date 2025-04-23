@@ -1,8 +1,10 @@
+
 from flask import Blueprint, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import uuid
+import base64
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("openai_api_key"))
@@ -34,7 +36,7 @@ def save_conversation_to_file(conversation_id):
     path = f"conversations/{conversation_id}.txt"
     with open(path, "a", encoding="utf-8") as f:
         for msg in conversation_store[conversation_id]:
-            f.write(f"{msg['role'].upper()}: {msg['content']}\n")  # Fixed this line
+            f.write(f"{msg['role'].upper()}: {msg['content']}\n")
         f.write("\n--- END OF TURN ---\n\n")
 
 def detect_task_type(user_input_text):
@@ -83,7 +85,6 @@ def reset_if_new_task(conversation_id, user_input_text):
     state = conversation_state[conversation_id]
     new_intent = detect_task_type(user_input_text)
     if new_intent and new_intent != state["last_intent"] and state["last_intent"] is not None:
-        # Reset
         conversation_store[conversation_id] = [{"role": "system", "content": system_prompt}]
         conversation_state[conversation_id] = {
             "last_intent": new_intent,
@@ -134,57 +135,22 @@ def generate_tts_response(text, language_code):
         f.write(tts_result.content)
     return output_path
 
-@ai_speech_to_text_gpt4o_bp.route('/voice-assist', methods=['POST'])
-def voice_assist():
-    data = request.get_json()
-    audio_file_path = data.get("audio_file_path")
-    conversation_id = data.get("conversation_id")
-    language_code = data.get("language_code", "en")
-
-    if not audio_file_path or not conversation_id:
-        return jsonify({"error": "Audio file path and conversation_id must be provided."}), 400
-    initialize_conversation(conversation_id)
-
-    try:
-        with open(audio_file_path, 'rb') as audio_file:
-            transcription_result = client.audio.transcriptions.create(
-                file=audio_file, model="whisper-1",
-                response_format="text", language=language_code
-            )
-        user_input_text = transcription_result
-    except Exception as e:
-        return jsonify({"error": f"Transcription failed: {e}"}), 500
-
-    try:
-        reply, detail = process_user_input(conversation_id, user_input_text, language_code)
-        audio_path = generate_tts_response(reply, language_code)
-    except Exception as e:
-        return jsonify({"error": f"Processing failed: {e}"}), 500
-
-    return jsonify({
-        "user_input_text": user_input_text,
-        "reply_text": reply,
-        "detailed_response": detail,
-        "reply_audio_path": audio_path,
-        "language_code": language_code,
-        "conversation_id": conversation_id
-    })
-
 @ai_speech_to_text_gpt4o_bp.route('/text-assist', methods=['POST'])
 def text_assist():
     data = request.get_json()
     user_input_text = data.get("user_input_text")
     conversation_id = data.get("conversation_id")
     language_code = data.get("language_code", "en")
-
     if not user_input_text or not conversation_id:
-        return jsonify({"error": "User input text and conversation_id must be provided."}), 400
+        return jsonify({"error": "Missing user_input_text or conversation_id"}), 400
 
     initialize_conversation(conversation_id)
 
     try:
         reply, detail = process_user_input(conversation_id, user_input_text, language_code)
         audio_path = generate_tts_response(reply, language_code)
+        with open(audio_path, "rb") as f:
+            base64_audio = base64.b64encode(f.read()).decode("utf-8")
     except Exception as e:
         return jsonify({"error": f"Processing failed: {e}"}), 500
 
@@ -193,6 +159,7 @@ def text_assist():
         "reply_text": reply,
         "detailed_response": detail,
         "reply_audio_path": audio_path,
+        "reply_audio_base64": base64_audio,
         "language_code": language_code,
         "conversation_id": conversation_id
     })
