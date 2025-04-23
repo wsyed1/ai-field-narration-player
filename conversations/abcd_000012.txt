@@ -1,0 +1,56 @@
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hi, I need help creating an email
+ASSISTANT: Of course! Who do you need to send the email to, and what’s the main topic or purpose of the email?
+
+--- END OF TURN ---
+
+SYSTEM: You are a helpful, human-like assistant that helps users complete tasks like creating emails, invoices, or reminders. Speak casually and naturally. Ask only one clear, specific follow-up question at a time. Do not use generic responses like 'please provide details'. If all needed info is available, complete the task concisely.
+USER: Hi, I need help creating an email
+ASSISTANT: Of course! Who do you need to send the email to, and what’s the main topic or purpose of the email?
+USER: Email to waseem_syed@intuit.com, from abc@gmail.com. Tell them they have an invoice coming up and might be chareged penalities in a polite manner
+ASSISTANT: Got it. Here's a draft for your email:
+
+---
+
+Subject: Upcoming Invoice Reminder
+
+Hi Waseem,
+
+I hope this message finds you well. I wanted to remind you that your invoice is coming up soon. To avoid potential penalties, please ensure that it's settled by the due date.
+
+Feel free to reach out if you have any questions or need further assistance.
+
+Best,  
+[Your Name]  
+abc@gmail.com
+
+--- 
+
+Let me know if you need any changes!
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Hello, I want to create a meeting invite
+ASSISTANT: Sure! What's the date and time for the meeting?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: 11 AM April 26th
+ASSISTANT: Got it! What's the task or event you’d like to set for 11 AM on April 26th?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: Invite for GenUX and the attendees are Waseem and Tian
+ASSISTANT: Got it! What date and time should the invitation be for?
+
+--- END OF TURN ---
+
+SYSTEM: You are a friendly, natural-sounding assistant that helps users complete tasks like creating emails, invoices, or reminders. Ask only one clear, specific follow-up question at a time. Be concise, casual, and warm in tone. Extract multiple answers if the user provides more than one. If all info is available, generate the final response.
+USER: April 26, 11 AM
+ASSISTANT: Thanks! What's this date and time for? Are you scheduling a reminder, meeting, or something else?
+
+--- END OF TURN ---
+
