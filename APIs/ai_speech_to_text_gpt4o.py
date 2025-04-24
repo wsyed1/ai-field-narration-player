@@ -214,25 +214,33 @@ def stream_text_assist():
     reset_if_new_task(conversation_id, user_input_text)
     conversation_store[conversation_id].append({"role": "user", "content": user_input_text})
     def generate():
-        print(">>> Streaming Started")
+        collected = ""
         try:
+            # Step 1: stream GPT text output
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=conversation_store[conversation_id],
-                stream=True  # Enable streaming mode
+                stream=True
             )
-            collected = ""
             for chunk in response:
                 delta = chunk.choices[0].delta
-                print(delta)
-                if delta.content is not None:
-                # if "content" in delta:
+                if delta.content:
                     text = delta.content
                     collected += text
-                    print(text)
-                    yield text + "\n"
-            # Store final full response
+                    yield f"data: {text}\n\n"
+            # Step 2: save full response to history
             conversation_store[conversation_id].append({"role": "assistant", "content": collected})
+            # Step 3: generate TTS
+            audio_path = generate_tts_response(collected, language_code)
+            # Step 4: stream audio as base64
+            with open(audio_path, "rb") as f:
+                while True:
+                    chunk = f.read(4096)
+                    if not chunk:
+                        break
+                    base64_chunk = base64.b64encode(chunk).decode("utf-8")
+                    yield f"data: [AUDIO_BASE64] {base64_chunk}\n\n"
         except Exception as e:
             yield f"data: [ERROR] {str(e)}\n\n"
     return Response(stream_with_context(generate()), mimetype="text/event-stream")
+
