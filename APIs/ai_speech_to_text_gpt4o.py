@@ -129,7 +129,7 @@ def process_user_input(conversation_id, user_input_text, language_code):
 def generate_tts_response(text, language_code):
     voice = voice_mapping.get(language_code, "nova")
     tts_result = client.audio.speech.create(
-        model="tts-1", voice=voice, input=text
+        model="tts-1", voice=voice, input=text, response_format="pcm"
     )
     output_path = f"voice_reply_{uuid.uuid4().hex}.mp3"
     with open(output_path, "wb") as f:
