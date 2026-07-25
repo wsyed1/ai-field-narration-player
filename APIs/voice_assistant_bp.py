@@ -3,6 +3,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from urllib.parse import quote
 import os
+import io
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv('openai_api_key'))
@@ -82,24 +83,22 @@ def test_client():
 
 @voice_assistant_bp.route('/voice/chat/whisper', methods=['POST'])
 def chat_whisper():
-    data = request.get_json()
-    audio_file_path = data.get('audio_file_path')
-    session_id = data.get('session_id')
+    audio_file = request.files.get('audio_file')
+    session_id = request.form.get('session_id')
 
-    if not audio_file_path or not session_id:
-        return jsonify({"error": "audio_file_path and session_id are required."}), 400
+    if not audio_file or not session_id:
+        return jsonify({"error": "audio_file and session_id are required."}), 400
 
     interrupt_flags[session_id] = False
 
     try:
-        with open(audio_file_path, 'rb') as audio_file:
-            transcript = client.audio.transcriptions.create(
-                file=audio_file,
-                model="whisper-1",
-                response_format="text"
-            )
-    except FileNotFoundError:
-        return jsonify({"error": "Audio file not found."}), 404
+        audio_buffer = io.BytesIO(audio_file.read())
+        audio_buffer.name = audio_file.filename or "recording.m4a"
+        transcript = client.audio.transcriptions.create(
+            file=audio_buffer,
+            model="whisper-1",
+            response_format="text"
+        )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

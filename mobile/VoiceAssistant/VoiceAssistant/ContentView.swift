@@ -65,6 +65,7 @@ final class ConversationViewModel: ObservableObject {
     var isIdle: Bool { state == .idle }
 
     func micButtonTapped() {
+        print("[Mic] micButtonTapped, mode=\(mode), sessionActive=\(sessionActive), state=\(state)")
         if sessionActive {
             endSession()
         } else {
@@ -110,8 +111,10 @@ final class ConversationViewModel: ObservableObject {
                 }
             }
         case .precision:
+            print("[Precision] beginListening: requesting mic permission")
             Task {
                 let granted = await audioRecorder.requestPermission()
+                print("[Precision] permission granted=\(granted)")
                 guard granted else {
                     errorMessage = "Microphone permission denied."
                     sessionActive = false
@@ -119,8 +122,10 @@ final class ConversationViewModel: ObservableObject {
                 }
                 do {
                     try audioRecorder.startRecording()
+                    print("[Precision] startRecording succeeded, fileURL=\(String(describing: audioRecorder.currentFileURL))")
                     state = .listening
                 } catch {
+                    print("[Precision] startRecording threw: \(error)")
                     errorMessage = error.localizedDescription
                     sessionActive = false
                 }

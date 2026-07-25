@@ -46,7 +46,8 @@ final class NetworkClient {
         return try await performStreamingRequest(request, onChunk: onChunk)
     }
 
-    /// Uploads a recorded audio file for cloud transcription, then streams the reply.
+    /// Uploads a recorded audio file's bytes for cloud transcription, then streams the reply.
+    /// Sent as multipart form data since the file only exists on this device, not the server.
     func streamAudioFile(
         at fileURL: URL,
         sessionId: String,
@@ -55,13 +56,28 @@ final class NetworkClient {
         guard let url = URL(string: "\(BackendConfig.baseURL)/voice/chat/whisper") else {
             throw NetworkError.badResponse
         }
+        let audioData = try Data(contentsOf: fileURL)
+        let boundary = "Boundary-\(UUID().uuidString)"
+
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"session_id\"\r\n\r\n".data(using: .utf8)!)
+        body.append("\(sessionId)\r\n".data(using: .utf8)!)
+
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append(
+            "Content-Disposition: form-data; name=\"audio_file\"; filename=\"\(fileURL.lastPathComponent)\"\r\n"
+                .data(using: .utf8)!
+        )
+        body.append("Content-Type: audio/m4a\r\n\r\n".data(using: .utf8)!)
+        body.append(audioData)
+        body.append("\r\n".data(using: .utf8)!)
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: [
-            "audio_file_path": fileURL.path,
-            "session_id": sessionId
-        ])
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.httpBody = body
         return try await performStreamingRequest(request, onChunk: onChunk)
     }
 
