@@ -15,6 +15,7 @@
 		A2A6E757082D4F5B9CC6A090 /* BackendConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA763F272F6F45DAA5A1669A /* BackendConfig.swift */; };
 		C0D833FDF46C43F988147E84 /* VoiceAssistantApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76630F43B0C4C30AACAF64D /* VoiceAssistantApp.swift */; };
 		EB286547A8A541A5BC10558E /* AudioPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8DAA77B6E143058C9EFD29 /* AudioPlayerManager.swift */; };
+		DDC80EC1FDDE84498C2468A3 /* BargeInMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103D3C4D4142DCC020DFF3ED /* BargeInMonitor.swift */; };
 		FD1E29BC92294B6A8550DF38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9227998712F490099FD719E /* Assets.xcassets */; };
 		FE9CCCE64BAA4684889751B5 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CEA3A802F44E778B9330DF /* NetworkClient.swift */; };
 /* End PBXBuildFile section */
@@ -24,6 +25,7 @@
 		3CD41D90C33D444DBBC0A6ED /* AudioRecorderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderManager.swift; sourceTree = "<group>"; };
 		3E253607616045EEB19D2E37 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B8DAA77B6E143058C9EFD29 /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
+		103D3C4D4142DCC020DFF3ED /* BargeInMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BargeInMonitor.swift; sourceTree = "<group>"; };
 		7A3754DAD22F4C8D90B3A4C8 /* SpeechRecognizerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizerManager.swift; sourceTree = "<group>"; };
 		9447901F15EB4A5C9B21C387 /* VoiceAssistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoiceAssistant.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97BEE1694AD4443695762F23 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 				CA763F272F6F45DAA5A1669A /* BackendConfig.swift */,
 				37CEA3A802F44E778B9330DF /* NetworkClient.swift */,
 				4B8DAA77B6E143058C9EFD29 /* AudioPlayerManager.swift */,
+				103D3C4D4142DCC020DFF3ED /* BargeInMonitor.swift */,
 				3CD41D90C33D444DBBC0A6ED /* AudioRecorderManager.swift */,
 				7A3754DAD22F4C8D90B3A4C8 /* SpeechRecognizerManager.swift */,
 				E60C21F7AFC747B792306099 /* ConversationTurn.swift */,
@@ -162,6 +165,7 @@
 				A2A6E757082D4F5B9CC6A090 /* BackendConfig.swift in Sources */,
 				FE9CCCE64BAA4684889751B5 /* NetworkClient.swift in Sources */,
 				EB286547A8A541A5BC10558E /* AudioPlayerManager.swift in Sources */,
+				DDC80EC1FDDE84498C2468A3 /* BargeInMonitor.swift in Sources */,
 				5BB4BB9BFB9F40809342D765 /* AudioRecorderManager.swift in Sources */,
 				8350715E8C7042F894194686 /* SpeechRecognizerManager.swift in Sources */,
 				8C5DBBA1BA99430B884D418F /* ConversationTurn.swift in Sources */,

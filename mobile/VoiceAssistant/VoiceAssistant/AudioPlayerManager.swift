@@ -30,12 +30,16 @@ final class AudioPlayerManager: NSObject, ObservableObject {
     }
 
     /// Call once before feeding the first chunk of a new response.
+    ///
+    /// Uses `.playAndRecord`/`.voiceChat` (not `.playback`) so BargeInMonitor can
+    /// listen for the user talking over the response without fighting this
+    /// engine over the shared AVAudioSession's category.
     func startStream() throws {
         stop()
         didFinishNaturally = false
 
         let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playback, mode: .default)
+        try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.defaultToSpeaker, .allowBluetoothHFP])
         try session.setActive(true)
 
         if !engine.isRunning {

@@ -30,7 +30,15 @@ final class ConversationViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     fileprivate var state: ConversationState = .idle {
-        didSet { objectWillChange.send() }
+        didSet {
+            objectWillChange.send()
+            guard oldValue != state else { return }
+            if state == .speaking {
+                startBargeInMonitor()
+            } else if oldValue == .speaking {
+                bargeInMonitor.stop()
+            }
+        }
     }
 
     /// True once the user has tapped the mic to begin a conversation session.
@@ -43,6 +51,7 @@ final class ConversationViewModel: ObservableObject {
     let speechRecognizer = SpeechRecognizerManager()
     let audioRecorder = AudioRecorderManager()
     let audioPlayer = AudioPlayerManager()
+    private let bargeInMonitor = BargeInMonitor()
 
     private static let greeting = "Hey, what's on your mind today?"
 
@@ -52,11 +61,37 @@ final class ConversationViewModel: ObservableObject {
                 await self?.sendText(text)
             }
         }
+        audioRecorder.onPauseDetected = { [weak self] fileURL in
+            Task { @MainActor in
+                await self?.sendAudioFile(fileURL)
+            }
+        }
         audioPlayer.onPlaybackFinished = { [weak self] in
             Task { @MainActor in
                 self?.playbackDidFinish()
             }
         }
+        bargeInMonitor.onSpeechDetected = { [weak self] in
+            Task { @MainActor in
+                self?.handleBargeIn()
+            }
+        }
+    }
+
+    private func startBargeInMonitor() {
+        do {
+            try bargeInMonitor.start()
+        } catch {
+            // Barge-in is a nice-to-have; failing to start it shouldn't interrupt playback.
+        }
+    }
+
+    private func handleBargeIn() {
+        guard sessionActive, state == .speaking else { return }
+        bargeInMonitor.stop()
+        audioPlayer.stop()
+        Task { await NetworkClient.shared.interrupt(sessionId: sessionId) }
+        beginListening()
     }
 
     var isListening: Bool { state == .listening }
@@ -65,7 +100,6 @@ final class ConversationViewModel: ObservableObject {
     var isIdle: Bool { state == .idle }
 
     func micButtonTapped() {
-        print("[Mic] micButtonTapped, mode=\(mode), sessionActive=\(sessionActive), state=\(state)")
         if sessionActive {
             endSession()
         } else {
@@ -85,6 +119,7 @@ final class ConversationViewModel: ObservableObject {
         speechRecognizer.stopListening()
         audioRecorder.stopRecording()
         audioPlayer.stop()
+        bargeInMonitor.stop()
         Task { await NetworkClient.shared.interrupt(sessionId: sessionId) }
         state = .idle
         liveTranscript = ""
@@ -111,10 +146,8 @@ final class ConversationViewModel: ObservableObject {
                 }
             }
         case .precision:
-            print("[Precision] beginListening: requesting mic permission")
             Task {
                 let granted = await audioRecorder.requestPermission()
-                print("[Precision] permission granted=\(granted)")
                 guard granted else {
                     errorMessage = "Microphone permission denied."
                     sessionActive = false
@@ -122,10 +155,8 @@ final class ConversationViewModel: ObservableObject {
                 }
                 do {
                     try audioRecorder.startRecording()
-                    print("[Precision] startRecording succeeded, fileURL=\(String(describing: audioRecorder.currentFileURL))")
                     state = .listening
                 } catch {
-                    print("[Precision] startRecording threw: \(error)")
                     errorMessage = error.localizedDescription
                     sessionActive = false
                 }
@@ -133,8 +164,8 @@ final class ConversationViewModel: ObservableObject {
         }
     }
 
-    /// Manual stop for Precision Mode, where recording length is user-controlled
-    /// (Live Mode ends listening automatically via pause detection instead).
+    /// Manual early-stop for Precision Mode, in case the user wants to send
+    /// before the silence-based auto-send timer fires.
     func stopListeningManually() {
         guard mode == .precision, state == .listening else { return }
         guard let fileURL = audioRecorder.stopRecording() else { return }
