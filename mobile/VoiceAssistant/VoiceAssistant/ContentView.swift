@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 enum ListeningMode: String, CaseIterable, Identifiable {
     case precision = "Precision Mode"
@@ -12,6 +13,13 @@ enum ListeningMode: String, CaseIterable, Identifiable {
         case .live: return "On-device \u{2022} real-time transcript"
         }
     }
+
+    var icon: String {
+        switch self {
+        case .precision: return "cloud.fill"
+        case .live: return "bolt.fill"
+        }
+    }
 }
 
 private enum ConversationState {
@@ -23,7 +31,14 @@ private enum ConversationState {
 
 @MainActor
 final class ConversationViewModel: ObservableObject {
-    @Published var mode: ListeningMode = .live
+    @Published var mode: ListeningMode = .live {
+        didSet {
+            guard oldValue != mode else { return }
+            liveTranscript = ""
+            lastUserText = ""
+            lastResponseText = ""
+        }
+    }
     @Published var liveTranscript = ""
     @Published var lastUserText = ""
     @Published var lastResponseText = ""
@@ -46,16 +61,32 @@ final class ConversationViewModel: ObservableObject {
     /// so the session auto-resumes listening after each response.
     private var sessionActive = false
 
-    let sessionId = UUID().uuidString
+    /// Each mode gets its own independent session/history — switching modes
+    /// doesn't carry conversation context over, and switching back resumes
+    /// that mode's own history rather than starting over.
+    private var sessionIds: [ListeningMode: String] = [
+        .live: UUID().uuidString,
+        .precision: UUID().uuidString
+    ]
+    var sessionId: String { sessionIds[mode]! }
 
     let speechRecognizer = SpeechRecognizerManager()
     let audioRecorder = AudioRecorderManager()
     let audioPlayer = AudioPlayerManager()
     private let bargeInMonitor = BargeInMonitor()
+    private var cancellables = Set<AnyCancellable>()
 
     private static let greeting = "Hey, what's on your mind today?"
 
     init() {
+        // SpeechRecognizerManager is its own ObservableObject; ContentView only
+        // observes this view model, so mirror its live partial-result updates
+        // here or the transcript won't visibly update while the user is talking.
+        speechRecognizer.$liveTranscript
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.liveTranscript, on: self)
+            .store(in: &cancellables)
+
         speechRecognizer.onPauseDetected = { [weak self] text in
             Task { @MainActor in
                 await self?.sendText(text)
@@ -225,102 +256,80 @@ struct ContentView: View {
     @StateObject private var viewModel = ConversationViewModel()
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 24) {
-                modePicker
+        ZStack {
+            Color.black.ignoresSafeArea()
 
-                transcriptCard
+            VStack(spacing: 0) {
+                modeToggle
+                    .padding(.top, 8)
 
                 Spacer()
 
-                micButton
+                VoiceOrb(style: orbStyle, action: micTapped)
 
-                responseCard
+                Text(statusText)
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.7))
+                    .padding(.top, 28)
+                    .animation(.easeInOut, value: statusText)
+
+                Spacer()
+
+                captionArea
+                    .padding(.bottom, 24)
             }
-            .padding()
-            .navigationTitle("Voice AI Assistant")
-            .alert(
-                "Something went wrong",
-                isPresented: Binding(
-                    get: { viewModel.errorMessage != nil },
-                    set: { if !$0 { viewModel.errorMessage = nil } }
-                )
-            ) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(viewModel.errorMessage ?? "")
-            }
+            .padding(.horizontal, 20)
+        }
+        .preferredColorScheme(.dark)
+        .alert(
+            "Something went wrong",
+            isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.errorMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(viewModel.errorMessage ?? "")
         }
     }
 
-    private var modePicker: some View {
-        VStack(spacing: 4) {
-            Picker("Mode", selection: $viewModel.mode) {
-                ForEach(ListeningMode.allCases) { mode in
-                    Text(mode.rawValue).tag(mode)
+    private var modeToggle: some View {
+        HStack(spacing: 8) {
+            ForEach(ListeningMode.allCases) { mode in
+                Button {
+                    viewModel.mode = mode
+                } label: {
+                    Label(mode.rawValue, systemImage: mode.icon)
+                        .font(.caption.weight(.medium))
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule().fill(viewModel.mode == mode ? Color.white.opacity(0.18) : .clear)
+                        )
+                        .foregroundStyle(viewModel.mode == mode ? .white : .white.opacity(0.5))
                 }
+                .disabled(!viewModel.isIdle)
             }
-            .pickerStyle(.segmented)
-            .disabled(!viewModel.isIdle)
-
-            Text(viewModel.mode.subtitle)
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
+        .padding(4)
+        .background(Capsule().fill(Color.white.opacity(0.06)))
     }
 
-    private var transcriptCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("Live Transcript", systemImage: "waveform")
-                .font(.subheadline.bold())
-                .foregroundStyle(.secondary)
-
-            Text(transcriptText)
-                .font(.body)
-                .frame(maxWidth: .infinity, minHeight: 80, alignment: .topLeading)
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-        }
+    private var orbStyle: VoiceOrb.Style {
+        if viewModel.isThinking { return .thinking }
+        if viewModel.isSpeaking { return .speaking }
+        if viewModel.isListening { return .listening }
+        return .idle
     }
 
-    private var transcriptText: String {
+    private var statusText: String {
+        if viewModel.isThinking { return "Thinking\u{2026}" }
+        if viewModel.isSpeaking { return "Speaking \u{2014} tap to interrupt" }
         if viewModel.isListening {
-            if viewModel.mode == .live {
-                return viewModel.speechRecognizer.liveTranscript.isEmpty
-                    ? "Listening..."
-                    : viewModel.speechRecognizer.liveTranscript
-            }
-            return "Recording... tap the mic again to send."
+            return viewModel.mode == .live ? "Listening \u{2014} pause when you're done" : "Tap again to send"
         }
-        return viewModel.lastUserText.isEmpty ? "Tap the mic to start talking." : viewModel.lastUserText
-    }
-
-    private var micButton: some View {
-        VStack(spacing: 12) {
-            Button(action: micTapped) {
-                ZStack {
-                    Circle()
-                        .fill(micColor)
-                        .frame(width: 96, height: 96)
-                        .shadow(radius: 6)
-
-                    if viewModel.isThinking {
-                        ProgressView()
-                            .tint(.white)
-                    } else {
-                        Image(systemName: micIcon)
-                            .font(.system(size: 36))
-                            .foregroundStyle(.white)
-                    }
-                }
-            }
-            .animation(.easeInOut(duration: 0.15), value: micColor)
-
-            Text(micStatusText)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
+        return "Tap to start talking"
     }
 
     private func micTapped() {
@@ -331,38 +340,37 @@ struct ContentView: View {
         }
     }
 
-    private var micColor: Color {
-        if viewModel.isIdle { return .accentColor }
-        if viewModel.isListening { return .red }
-        return .orange
-    }
-
-    private var micIcon: String {
-        viewModel.isIdle ? "mic.fill" : "stop.fill"
-    }
-
-    private var micStatusText: String {
-        if viewModel.isThinking { return "Thinking..." }
-        if viewModel.isSpeaking { return "Speaking \u{2014} tap mic to end" }
-        if viewModel.isListening {
-            return viewModel.mode == .live ? "Listening \u{2014} pause to send" : "Tap again to send"
+    private var captionArea: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            if !transcriptCaption.isEmpty {
+                captionRow(icon: "person.wave.2.fill", text: transcriptCaption, color: .white.opacity(0.65))
+            }
+            if !viewModel.lastResponseText.isEmpty {
+                captionRow(icon: "sparkle", text: viewModel.lastResponseText, color: .white)
+            }
         }
-        return "Tap to speak"
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var responseCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("AI Response", systemImage: "text.bubble")
-                .font(.subheadline.bold())
-                .foregroundStyle(.secondary)
+    private func captionRow(icon: String, text: String, color: Color) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(color.opacity(0.8))
+                .padding(.top, 3)
 
-            Text(viewModel.lastResponseText.isEmpty ? "\u{2014}" : viewModel.lastResponseText)
-                .font(.body)
-                .frame(maxWidth: .infinity, minHeight: 80, alignment: .topLeading)
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+            Text(text)
+                .font(.callout)
+                .foregroundStyle(color)
+                .fixedSize(horizontal: false, vertical: true)
         }
+    }
+
+    private var transcriptCaption: String {
+        if viewModel.isListening && viewModel.mode == .live {
+            return viewModel.liveTranscript
+        }
+        return viewModel.lastUserText
     }
 }
 

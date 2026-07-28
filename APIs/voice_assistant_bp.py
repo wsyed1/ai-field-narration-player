@@ -12,23 +12,50 @@ voice_assistant_bp = Blueprint('voice_assistant_bp', __name__)
 
 sessions = {}
 interrupt_flags = {}
+identity_verified = {}
+identity_step = {}  # session_id -> "greeting" | "awaiting_name" | "awaiting_sport"
+identity_name_answer = {}
+
+EXPECTED_NAME = "John Appleseed"
+GREETING_AND_NAME_PROMPT = "Hey there, how are you today? Can I please take a moment to verify your identity? Can you tell me your first and last name?"
+SPORT_PROMPT = "Thanks! And one more quick question — what's your favorite sport?"
+IDENTITY_REJECTED_MESSAGE = "Sorry, I couldn't verify your identity, so I can't continue. Let's try again — can you tell me your first and last name?"
 
 MOCK_PATIENT = """
-Patient: John Doe, Age 34
+Patient: John Appleseed, Age 34
 Allergies: Penicillin
 Current medications: Metformin 500mg
 Medical history: Type 2 diabetes, mild hypertension
 """
 
 SYSTEM_PROMPT = f"""
-You are a helpful voice AI assistant.
+You are a warm, friendly voice AI assistant with a caring, conversational tone — like a
+supportive nurse checking in, not a clinical script.
 You have access to the following patient information:
 {MOCK_PATIENT}
+
+Tone and pacing:
+- Talk like a real person on a phone call, not a form. Be warm and natural.
+- Keep every response short — 1 to 3 sentences. Never a long list or a wall of text.
+- Never answer with just one word — always a brief, complete, human-sounding reply.
+- Ask only ONE clarifying question per response. Never stack multiple questions
+  together. Have a natural back-and-forth — it should take several turns to
+  gather what you need, not one big interrogation.
+- When bringing up the patient's history (allergies, medications, conditions),
+  never recite it like a chart. Weave it in conversationally, e.g. "I see you're
+  allergic to penicillin, so let's steer clear of that" — mention only what's
+  actually relevant to the conversation at that moment, not the full record.
+- If the user asks about or you recommend a specific medication, always check it
+  against their current medications and conditions first, and say so directly if
+  there's a relevant interaction or reason to avoid it (e.g. an NSAID like
+  ibuprofen and Metformin/kidney considerations) — don't just give a generic
+  "check with your doctor" answer when you already have the relevant info.
+
+Rules:
 - Ask clarifying questions before recommending anything
 - Never prescribe controlled substances
 - Never make a definitive diagnosis
 - Always recommend urgent care when symptoms are serious
-- Keep responses concise — this is a voice interface
 - End every response with: This is not a substitute for professional medical advice.
 """
 
@@ -60,12 +87,59 @@ def generate_reply(session_id, user_text):
     return response_text
 
 
+def check_name_answer(user_text):
+    """Uses the LLM to judge whether the spoken answer plausibly gives the
+    expected name, since a transcribed voice answer won't match a hardcoded
+    string exactly."""
+    prompt = f"""
+A user was asked for their first and last name. They answered: "{user_text}"
+
+Does their answer give the name "{EXPECTED_NAME}" (allow for minor
+transcription differences in spelling/spacing)? Reply with exactly one
+word: YES or NO.
+"""
+    completion = client.chat.completions.create(
+        model="gpt-4o",
+        temperature=0,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return completion.choices[0].message.content.strip().upper().startswith("YES")
+
+
+def handle_identity_gate(session_id, user_text):
+    """Returns a response string to speak if identity verification isn't done
+    yet, or None if the caller should proceed to the normal medical reply.
+
+    Runs as two separate questions in sequence: first and last name, then
+    favorite sport (asked once the name checks out; any sport answer is
+    accepted, since it's an icebreaker rather than something to validate)."""
+    if identity_verified.get(session_id, False):
+        return None
+
+    step = identity_step.get(session_id, "not_started")
+
+    if step == "not_started":
+        identity_step[session_id] = "awaiting_name"
+        return GREETING_AND_NAME_PROMPT
+
+    if step == "awaiting_name":
+        if check_name_answer(user_text):
+            identity_name_answer[session_id] = user_text
+            identity_step[session_id] = "awaiting_sport"
+            return SPORT_PROMPT
+        return IDENTITY_REJECTED_MESSAGE
+
+    if step == "awaiting_sport":
+        identity_verified[session_id] = True
+        return "Nice, thanks for that! You're all set — what can I help you with today?"
+
+
 def stream_speech_pcm(text, session_id):
     """Yields raw 16-bit PCM bytes as OpenAI TTS generates them, so the client
     can start playback before the full response finishes synthesizing."""
     with client.audio.speech.with_streaming_response.create(
         model="tts-1",
-        voice="nova",
+        voice="shimmer",
         input=text,
         response_format="pcm"
     ) as tts_response:
@@ -106,7 +180,8 @@ def chat_whisper():
         return jsonify({"status": "interrupted"}), 200
 
     try:
-        response_text = generate_reply(session_id, transcript)
+        gate_response = handle_identity_gate(session_id, transcript)
+        response_text = gate_response if gate_response is not None else generate_reply(session_id, transcript)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -132,7 +207,8 @@ def chat_text():
     interrupt_flags[session_id] = False
 
     try:
-        response_text = generate_reply(session_id, user_text)
+        gate_response = handle_identity_gate(session_id, user_text)
+        response_text = gate_response if gate_response is not None else generate_reply(session_id, user_text)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
