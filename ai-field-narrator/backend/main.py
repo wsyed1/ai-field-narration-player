@@ -2,7 +2,6 @@ from flask import Flask
 from ai_speech_to_text_whisper import ai_speech_to_text_whisper_bp
 # from ai_speech_to_text_gemini import ai_speech_to_text_gemini_bp
 from ai_speech_to_text_gpt4o import ai_speech_to_text_gpt4o_bp
-from voice_assistant_bp import voice_assistant_bp
 from dotenv import load_dotenv
 import os
 
@@ -12,7 +11,6 @@ app = Flask(__name__)
 app.register_blueprint(ai_speech_to_text_whisper_bp)
 # app.register_blueprint(ai_speech_to_text_gemini_bp)
 app.register_blueprint(ai_speech_to_text_gpt4o_bp)
-app.register_blueprint(voice_assistant_bp)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(debug=True)
