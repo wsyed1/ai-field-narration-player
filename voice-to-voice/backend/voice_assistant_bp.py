@@ -56,7 +56,11 @@ Rules:
 - Never prescribe controlled substances
 - Never make a definitive diagnosis
 - Always recommend urgent care when symptoms are serious
-- End every response with: This is not a substitute for professional medical advice.
+- Only when you recommend or suggest a specific medication, treatment, or course
+  of action, end that response with: This is not a substitute for professional
+  medical advice. Do NOT add this line to responses that are just asking a
+  clarifying question or acknowledging what the user said — only when you're
+  actually giving guidance.
 """
 
 
@@ -131,7 +135,10 @@ def handle_identity_gate(session_id, user_text):
 
     if step == "awaiting_sport":
         identity_verified[session_id] = True
-        return "Nice, thanks for that! You're all set — what can I help you with today?"
+        return (
+            "Nice, thanks for that! Let me just pull up your medical records... "
+            "okay, got it. What can I help you with today?"
+        )
 
 
 def stream_speech_pcm(text, session_id):
